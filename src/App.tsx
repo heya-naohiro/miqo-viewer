@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
+import { emit, listen } from '@tauri-apps/api/event'
 import "./App.css";
 
 function App() {
@@ -12,8 +13,26 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
   function executeCommands() {
-    invoke('simple_command')
+    invoke('my_custom_command')
   }
+  function emitMessage() {
+    emit('front-to-back', "hello from front")
+  }
+  useEffect(() => {
+    let unlisten: any;
+    async function f() {
+      unlisten = await listen('back-to-front', event => {
+        console.log(`back-to-front ${event.payload} ${new Date()}`)
+      });
+    }
+    f();
+
+    return () => {
+      if (unlisten) {
+        unlisten();
+      }
+    }
+  }, [])
 
   return (
     <div className="container">
@@ -51,6 +70,7 @@ function App() {
       <p>{greetMsg}</p>
       <div>Hello tauri</div>
       <button onClick={executeCommands}>Click to execute command</button>
+      <button onClick={emitMessage}>Stop</button>
     </div>
   );
 }
