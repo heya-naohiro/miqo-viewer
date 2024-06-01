@@ -4,10 +4,16 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { emit, listen } from '@tauri-apps/api/event'
 import "./App.css";
 
+type Packet = {
+  topic: string,
+  data: string,
+}
+
+
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
-
+  const [packet, setPacket] = useState<Array<Packet>>([]);
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke("greet", { name }));
@@ -21,9 +27,11 @@ function App() {
   useEffect(() => {
     let unlisten: any;
     async function f() {
-      unlisten = await listen('back-to-front', event => {
+      unlisten = await listen<Packet>('mqtt-packet-recieve', event => {
         console.log(`back-to-front ${event.payload} ${new Date()}`)
+        setPacket([...packet, event.payload]);
       });
+
     }
     f();
 

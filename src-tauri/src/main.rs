@@ -33,7 +33,7 @@ async fn my_custom_command(app_handle: tauri::AppHandle) -> String {
                 }
                 Err(mpsc::TryRecvError::Empty) => {
                     app_handle
-                        .emit_all("back-to-front", "ping frontend".to_string())
+                        .emit_all("mqtt-packet-recieve", "ping frontend".to_string())
                         .unwrap();
                     println!("emit all {}", i);
                     i = i + 1;
