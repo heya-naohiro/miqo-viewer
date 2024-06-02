@@ -19,10 +19,10 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
   function executeCommands() {
-    invoke('my_custom_command')
+    invoke('my_custom_command', { host: 'mqtt://localhost:1883' })
   }
   function emitMessage() {
-    emit('front-to-back', "hello from front")
+    emit('front-to-back', 'stop payload')
   }
   useEffect(() => {
     let unlisten: any;
