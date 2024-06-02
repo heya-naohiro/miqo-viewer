@@ -65,7 +65,6 @@ async fn my_custom_command(app_handle: tauri::AppHandle, host: String) -> String
                 return "";
             }
         };
-        println!("Hello World");
         let mqtt_rx = cli.start_consuming();
 
         let conn_opts = mqtt::ConnectOptionsBuilder::new()
@@ -95,27 +94,35 @@ async fn my_custom_command(app_handle: tauri::AppHandle, host: String) -> String
                     return "";
                 }
                 Err(mpsc::TryRecvError::Empty) => {
-                    println!("Hello Empty");
-                    let content = match mqtt_rx.try_recv() {
-                        Ok(content) => content,
-                        Err(err) => return "MQTT Message Error",
-                    };
-                    let message = if let Some(content) = content {
-                        println!("content, {}", content);
-                        content
-                    } else if cli.is_connected() || !try_reconnect(&cli) {
-                        return "";
-                    } else {
-                        continue;
-                    };
-                    let packet = Packet {
-                        topic: message.topic(),
-                        payload: message.payload(),
-                    };
-                    println!("mqtt-packet-recieve {:?}", packet);
-                    app_handle.emit_all("mqtt-packet-recieve", packet).unwrap();
+                    // go to mqtt recv
                 }
             }
+            let content = match mqtt_rx.try_recv() {
+                Ok(content) => content,
+                Err(crossbeam::channel::TryRecvError::Empty) => {
+                    continue;
+                }
+                Err(err) => {
+                    println!("mqtt message error {}", err);
+                    return "MQTT Message Error";
+                }
+            };
+            let message = if let Some(content) = content {
+                println!("content, {}", content);
+                content
+            } else if cli.is_connected() || !try_reconnect(&cli) {
+                return "";
+            } else {
+                continue;
+            };
+            let packet = Packet {
+                topic: message.topic(),
+                payload: message.payload(),
+            };
+            println!("mqtt-packet-recieve {:?}", packet.payload);
+            app_handle
+                .emit_all("mqtt-packet-recieve", packet.payload)
+                .unwrap();
         }
     });
     println!("stop");
