@@ -30,7 +30,7 @@ function App() {
     async function f() {
       unlisten = await listen<Packet>('mqtt-packet-recieve', event => {
         console.log(`back-to-front ${event.payload} ${new Date()}`)
-        setPacket([...packets, event.payload]);
+        setPacket(oldarray => [event.payload, ...oldarray]);
       });
 
     }

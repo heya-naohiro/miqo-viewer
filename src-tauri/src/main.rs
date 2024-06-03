@@ -128,10 +128,8 @@ async fn my_custom_command(app_handle: tauri::AppHandle, host: String) -> String
                 payload: payload,
                 timestamp: local.timestamp(),
             };
-            println!("mqtt-packet-recieve {:?}", packet.payload);
-            app_handle
-                .emit_all("mqtt-packet-recieve", packet.payload)
-                .unwrap();
+            println!("mqtt-packet-recieve {:?}", packet);
+            app_handle.emit_all("mqtt-packet-recieve", packet).unwrap();
         }
     });
     println!("stop");
