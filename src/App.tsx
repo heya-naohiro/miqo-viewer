@@ -6,14 +6,15 @@ import "./App.css";
 
 type Packet = {
   topic: string,
-  data: string,
+  payload: string,
+  timestamp: number,
 }
 
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
-  const [packet, setPacket] = useState<Array<Packet>>([]);
+  const [packets, setPacket] = useState<Array<Packet>>([]);
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke("greet", { name }));
@@ -29,7 +30,7 @@ function App() {
     async function f() {
       unlisten = await listen<Packet>('mqtt-packet-recieve', event => {
         console.log(`back-to-front ${event.payload} ${new Date()}`)
-        setPacket([...packet, event.payload]);
+        setPacket([...packets, event.payload]);
       });
 
     }
@@ -44,41 +45,33 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Welcome to Tauri!</h1>
+      <h1>Welcome to Miqo topic!</h1>
 
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
 
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
+      <p>{packets.length}</p>
       <div>Hello tauri</div>
-      <button onClick={executeCommands}>Click to execute command</button>
+      <button onClick={executeCommands}>Start</button>
       <button onClick={emitMessage}>Stop</button>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Topic</th>
+            <th scope="col">Payload</th>
+          </tr>
+        </thead>
+        <tbody>
+          {packets.map((packet) => {
+            return (
+              <tr key={packet.timestamp}>
+                <td>{packet.timestamp}</td>
+                <td>{packet.topic}</td>
+                <td>{packet.payload}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

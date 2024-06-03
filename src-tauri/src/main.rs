@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use chrono::prelude::{DateTime, Datelike, Local, Timelike, Utc};
 use paho_mqtt as mqtt;
 use serde::{Deserialize, Serialize};
 use std::str::Bytes;
@@ -13,9 +14,10 @@ enum Message {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Packet<'a> {
-    payload: &'a [u8],
-    topic: &'a str,
+struct Packet {
+    timestamp: i64,
+    payload: String,
+    topic: String,
 }
 
 fn try_reconnect(cli: &mqtt::Client) -> bool {
@@ -35,6 +37,10 @@ fn try_reconnect(cli: &mqtt::Client) -> bool {
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+fn readable_bytes(payload: &[u8]) -> String {
+    String::from_utf8_lossy(payload).into_owned()
 }
 
 #[tauri::command]
@@ -115,9 +121,12 @@ async fn my_custom_command(app_handle: tauri::AppHandle, host: String) -> String
             } else {
                 continue;
             };
+            let local: DateTime<Local> = Local::now();
+            let payload = readable_bytes(message.payload());
             let packet = Packet {
-                topic: message.topic(),
-                payload: message.payload(),
+                topic: message.topic().to_string(),
+                payload: payload,
+                timestamp: local.timestamp(),
             };
             println!("mqtt-packet-recieve {:?}", packet.payload);
             app_handle
