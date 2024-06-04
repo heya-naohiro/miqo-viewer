@@ -26,6 +26,11 @@ function App() {
     emit('front-to-back', 'stop payload')
   }
   useEffect(() => {
+    const unlisten = listen<Packet>('mqtt-packet-recieve', event => {
+      console.log(`back-to-front ${event.payload} ${new Date()}`)
+      setPacket(oldarray => [event.payload, ...oldarray]);
+    });
+    /*
     let unlisten: any;
     async function f() {
       unlisten = await listen<Packet>('mqtt-packet-recieve', event => {
@@ -40,6 +45,10 @@ function App() {
       if (unlisten) {
         unlisten();
       }
+    }
+    */
+    return () => {
+      unlisten.then(f => f())
     }
   }, [])
 
