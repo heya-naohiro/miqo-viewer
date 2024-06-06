@@ -1,7 +1,4 @@
-# Tauri + React + Typescript
+# What's Miqo viewer
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+Miqo Viewer is App for Viewing/Publishing MQTT packet
+Work in progress...
