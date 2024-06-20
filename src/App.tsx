@@ -4,7 +4,7 @@ import { emit, listen } from '@tauri-apps/api/event'
 import "./App.css";
 import { Packet, DataTable } from "./components/packet-data-table";
 import { ColumnDef } from "@tanstack/react-table"
-
+import { ProfileForm, ClientConfig } from "./components/client-config-form";
 
 export const columns: ColumnDef<Packet>[] = [
   {
@@ -24,9 +24,9 @@ export const columns: ColumnDef<Packet>[] = [
 
 function App() {
   const [packets, setPacket] = useState<Array<Packet>>([]);
-
-  function executeCommands() {
-    invoke('my_custom_command', { host: 'mqtt://localhost:1883' })
+  const [clientConfigs, setClientConfigs] = useState<Array<ClientConfig>>([]);
+  function startConnect() {
+    invoke('start_connect', { host: 'mqtt://localhost:1883' })
   }
   function emitMessage() {
     emit('front-to-back', 'stop payload')
@@ -44,10 +44,10 @@ function App() {
   return (
     <div className="container">
       <h1>Welcome to Miqo topic!</h1>
-
+      <ProfileForm />
       <p>{packets.length}</p>
       <div>Hello tauri</div>
-      <button onClick={executeCommands}>Start</button>
+      <button onClick={startConnect}>Connect</button>
       <button onClick={emitMessage}>Stop</button>
       <DataTable columns={columns} data={packets} />
     </div>

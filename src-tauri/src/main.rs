@@ -44,7 +44,7 @@ fn readable_bytes(payload: &[u8]) -> String {
 }
 
 #[tauri::command]
-async fn my_custom_command(app_handle: tauri::AppHandle, host: String) -> String {
+async fn start_connect(app_handle: tauri::AppHandle, host: String) -> String {
     println!("Hello {}", host);
     let (tx, rx) = mpsc::channel();
     /* Stop Command handler */
@@ -139,7 +139,7 @@ async fn my_custom_command(app_handle: tauri::AppHandle, host: String) -> String
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, my_custom_command])
+        .invoke_handler(tauri::generate_handler![greet, start_connect])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
