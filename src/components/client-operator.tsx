@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-
+import { invoke } from "@tauri-apps/api/tauri";
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -58,6 +58,9 @@ const formSchema = z.object({
   hostname: z.string(),
 })
 
+function startConnect(host: String) {
+  invoke('start_connect', { host })
+}
 
 export function ProfileForm() {
   // 1. Define your form.
@@ -73,6 +76,8 @@ export function ProfileForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
     // send config event to backend
+    const url = 'mqtt://' + values.hostname + ':' + String(values.port)
+    startConnect(url);
   }
 
   return (
@@ -116,7 +121,7 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Connect</Button>
       </form>
     </Form>
   )
