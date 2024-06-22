@@ -1622,6 +1622,7 @@ version = "0.0.0"
 dependencies = [
  "chrono",
  "crossbeam",
+ "once_cell",
  "paho-mqtt",
  "serde",
  "serde_json",

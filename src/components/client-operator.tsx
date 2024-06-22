@@ -58,8 +58,8 @@ const formSchema = z.object({
   hostname: z.string(),
 })
 
-function startConnect(host: String) {
-  invoke('start_connect', { host })
+function startConnect(url: String) {
+  invoke('start_connect', { url })
 }
 
 export function ProfileForm() {
