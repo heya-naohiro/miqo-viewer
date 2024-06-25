@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { emit, listen } from '@tauri-apps/api/event'
 import "./App.css";
 import { Packet, DataTable } from "./components/packet-data-table";
 import { ColumnDef } from "@tanstack/react-table"
-import { ProfileForm, ClientConfig } from "./components/client-operator";
+import { ProfileForm } from "./components/client-operator";
 
 export const columns: ColumnDef<Packet>[] = [
   {
