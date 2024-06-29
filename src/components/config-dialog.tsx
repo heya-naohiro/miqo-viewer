@@ -32,6 +32,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 import { clientConfigSchema, MQTTAuthType, MQTTProtocol, MQTTVersion } from "./client-config"
+import { saveClientConfig } from "./client-config";
 
 
 
@@ -64,9 +65,8 @@ export function ConfigDialog() {
 
   // send config event to backend
   function onSave(values: z.infer<typeof clientConfigSchema>) {
-    console.log(values)
-    const url = 'tcp://' + values.hostname + ':' + String(values.port)
-    startConnect(url);
+    console.log(values);
+    saveClientConfig(values)
   }
 
   return (
@@ -255,12 +255,11 @@ export function ConfigDialog() {
               />
             </div>
           </div>
+          <Button type="submit">Save</Button>
         </form>
       </Form>
       <DialogFooter className="sm:justify-end">
-        <DialogClose asChild>
-          <Button type="submit">Save</Button>
-        </DialogClose>
+
       </DialogFooter>
     </>
   )
