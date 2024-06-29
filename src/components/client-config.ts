@@ -1,7 +1,6 @@
 import { z } from "zod"
-import { appConfigDir } from '@tauri-apps/api/path';
+import { join, appDataDir } from '@tauri-apps/api/path';
 import { readDir, writeTextFile, BaseDirectory, exists, createDir } from '@tauri-apps/api/fs';
-import path from "path";
 export enum MQTTProtocol {
   TCP = "tcp://",
   TLS = "ssl://",
@@ -45,7 +44,7 @@ export async function saveClientConfig(c: ClientConfig) {
   createConfDir();
   let contents = JSON.stringify(c);
   try {
-    await writeTextFile({ path: path.join('clientconfigs', c.name + '.json'), contents: contents }, { dir: BaseDirectory.AppData });
+    await writeTextFile({ path: await join('clientconfigs', c.name + '.json'), contents: contents }, { dir: BaseDirectory.AppData });
     alert('Success');
   } catch (e) {
     alert(e);

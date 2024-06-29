@@ -45,6 +45,7 @@ export function ConfigDialog() {
   const form = useForm<z.infer<typeof clientConfigSchema>>({
     resolver: zodResolver(clientConfigSchema),
     defaultValues: {
+      name: "new client",
       hostname: "",
       port: 1883,
       protocol: MQTTProtocol.TCP,
@@ -64,20 +65,23 @@ export function ConfigDialog() {
 
 
   // send config event to backend
-  function onSave(values: z.infer<typeof clientConfigSchema>) {
+  function onSubmit(values: z.infer<typeof clientConfigSchema>) {
     console.log(values);
     saveClientConfig(values)
   }
-
+  function onError(err: any) {
+    console.log(err);
+  }
   return (
     <>
-      <DialogHeader><DialogTitle>Client Setting</DialogTitle>
-        <DialogDescription>
-          mqtt client settings
-        </DialogDescription>
-      </DialogHeader>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSave)}>
+        <form onSubmit={form.handleSubmit(onSubmit, onError)}>
+          <DialogHeader><DialogTitle>Client Setting</DialogTitle>
+            <DialogDescription>
+              mqtt client settings
+            </DialogDescription>
+          </DialogHeader>
           <div className="grid grid-cols-6">
             <div className="col-span-1">
               <FormField
@@ -255,12 +259,15 @@ export function ConfigDialog() {
               />
             </div>
           </div>
-          <Button type="submit">Save</Button>
+
+          <FormMessage />
+          <DialogFooter className="sm:justify-end">
+            <DialogClose asChild>
+              <Button type="submit">Save</Button>
+            </DialogClose>
+          </DialogFooter>
         </form>
       </Form>
-      <DialogFooter className="sm:justify-end">
-
-      </DialogFooter>
     </>
   )
 }

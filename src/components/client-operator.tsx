@@ -106,5 +106,5 @@ export function ProfileForm() {
         </PopoverContent>
       </PopoverTrigger>
     </Popover>
-    <Button type="submit">Connect</Button></>)
+    {/*<Button type="submit">Connect</Button>*/}</>)
 }
